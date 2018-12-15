@@ -1,0 +1,47 @@
+<?php
+
+$input = explode("|", readline());
+if (count($input) === 3) {
+    $firstPart = $input[0];
+    $secondPart = $input[1];
+    $thirdPart = $input[2];
+
+    $regFirst = '/(?<capital>[#][A-Z]+[#]|[\$][A-Z]+[\$]|[%][A-Z]+[%]|[\*][A-Z]+[\*][&][A-Z]+[&])/m';
+    $regSecond = '/(?<asciinum>[0-9]+:[0-1][0-9])/m';
+    $regThird = '';
+    preg_match($regFirst, $firstPart, $matches);
+//print_r($matches);
+    $capitalLetters = "";
+    for ($i = 1; $i < strlen($matches['capital']) - 1; $i++) {
+        $capitalLetters .= $matches['capital'][$i];
+    }
+
+    preg_match_all($regSecond, $secondPart, $asciiArr);
+
+    $asciiArr = $asciiArr['asciinum'];
+    $arrOfLetter = [];
+    $arrOfLength = [];
+
+    for ($i = 0; $i < count($asciiArr); $i++) {
+        $element = explode(":", $asciiArr[$i]);
+
+        for ($j = 0; $j < strlen($capitalLetters); $j++) {
+            if ($capitalLetters[$j] === chr($element[0])) {
+                $arrOfLetter[chr($element[0])] = intval($element[1]) + 1;;
+//            $arrOfLength[]
+            }
+        }
+    }
+    $output = [];
+    $thirdPart = explode(" ", $thirdPart);
+    for ($i = 0; $i < count($thirdPart); $i++) {
+        if (key_exists($thirdPart[$i][0], $arrOfLetter) && strlen($thirdPart[$i]) === $arrOfLetter[$thirdPart[$i][0]]) {
+            $output[] = $thirdPart[$i];
+        }
+    }
+
+
+    foreach ($output as $word) {
+        echo $word . PHP_EOL;
+    }
+}
